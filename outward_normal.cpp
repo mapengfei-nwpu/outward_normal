@@ -57,9 +57,9 @@ vector<double> *out_normal(vector<double> &points,  vector<size_t> &triangles){
         pc[2] = (p1[2]+p2[2]+p3[2])/3.0;
         //cout <<"center point:"<< pc[0] << pc[1] << pc[2]<< endl;
         //cout <<"out normal:"<< local_normal[0] << local_normal[1] << local_normal[2]<< endl;
-        double d1 = distance(p1,pc);
-        double d2 = distance(p2,pc);
-        double d3 = distance(p3,pc);
+        double d1 = dist(p1,pc);
+        double d2 = dist(p2,pc);
+        double d3 = dist(p3,pc);
         (*out_normal)[p1_index*3+0] += local_normal[0]/d1;
         (*out_normal)[p1_index*3+1] += local_normal[1]/d1;
         (*out_normal)[p1_index*3+2] += local_normal[2]/d1;
