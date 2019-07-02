@@ -1,0 +1,11 @@
+*.bin
+*.ipch
+*.h5
+*.xdmf
+*.pvd
+*.vtu
+*.pyc
+*.pvtu
+__pycache__
+.vscode
+
