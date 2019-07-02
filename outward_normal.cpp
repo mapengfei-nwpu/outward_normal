@@ -8,7 +8,7 @@ using namespace std;
 #include <pybind11/numpy.h>
 namespace py = pybind11;
 
-double distance(const double *p1, const double *p2){
+double dist(const double *p1, const double *p2){
     return ((p1[0]-p2[0])*(p1[0]-p2[0])+(p1[1]-p2[1])*(p1[1]-p2[1])+(p1[2]-p2[2])*(p1[2]-p2[2]));
 }
 void triangle_normal(const double *a, const double *b, const double *c, double *normal)
@@ -129,7 +129,7 @@ int main(){
     return 0;
 }
 *******************************************************************************/
-py::array_t<double> normal1(py::array_t<double> input1, py::array_t<int> input2)
+py::array_t<double> outward_normal(py::array_t<double> input1, py::array_t<int> input2)
 {	
 	py::buffer_info buf1 = input1.request();
     py::buffer_info buf2 = input2.request();
@@ -169,8 +169,8 @@ py::array_t<double> normal1(py::array_t<double> input1, py::array_t<int> input2)
     return output;
 }
 
-PYBIND11_MODULE(normal1,m){
-    m.def("normal1", &normal1, "haven't reckon about the explanation yet");
+PYBIND11_MODULE(outward_normal,m){
+    m.def("outward_normal", &outward_normal, "haven't reckon about the explanation yet");
 }
 // output executable program.
-// c++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` out_normal.cpp -o out_normal`python3-config --extension-suffix`
+// c++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` outward_normal.cpp -o outward_normal`python3-config --extension-suffix`
