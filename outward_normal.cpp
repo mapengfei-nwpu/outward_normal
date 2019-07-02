@@ -38,8 +38,8 @@ void triangle_normal(const double *a, const double *b, const double *c, double *
 vector<double> *out_normal(vector<double> &points,  vector<size_t> &triangles){
     size_t num_points = points.size()/3;
     size_t num_triangles = triangles.size()/3;
-    cout<<points.size()<<endl;
-    cout<<triangles.size()<<endl;
+    //cout<<points.size()<<endl;
+    //cout<<triangles.size()<<endl;
     vector<double> *out_normal = new vector<double>(num_points*3);
     for (size_t i=0; i<num_triangles; i++){
         auto p1_index = triangles[i*3+0];
