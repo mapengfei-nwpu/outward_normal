@@ -8,35 +8,8 @@ using namespace std;
 #include <pybind11/numpy.h>
 namespace py = pybind11;
 
-void getNodeCoord_TriInd( vector<double> &points,  vector<size_t> &triangles)
-{
-    double double_temp;
-    size_t size_t_temp;
-	string node="points16648.txt";
-    string triangle="triangles16648.txt";
-
-	ifstream file;
-	file.open(node,  ios::in);
-    while(! file.eof())
-    {
-        file >> double_temp;
-        points.push_back(double_temp);
-    }
-    points.pop_back();
-	file.close();
-
-	file.open(triangle,  ios::in);
-    while(! file.eof())
-    {
-        file >> size_t_temp;
-        triangles.push_back(size_t_temp);
-    }
-    triangles.pop_back();
-	file.close();
-
-}
-double dist(const double *p1, const double *p2){
-    return (p1[0]-p2[0])*(p1[0]-p2[0])+(p1[1]-p2[1])*(p1[1]-p2[1])+(p1[2]-p2[2])*(p1[2]-p2[2]);
+double distance(const double *p1, const double *p2){
+    return ((p1[0]-p2[0])*(p1[0]-p2[0])+(p1[1]-p2[1])*(p1[1]-p2[1])+(p1[2]-p2[2])*(p1[2]-p2[2]));
 }
 void triangle_normal(const double *a, const double *b, const double *c, double *normal)
 {
@@ -65,6 +38,8 @@ void triangle_normal(const double *a, const double *b, const double *c, double *
 vector<double> *out_normal(vector<double> &points,  vector<size_t> &triangles){
     size_t num_points = points.size()/3;
     size_t num_triangles = triangles.size()/3;
+    cout<<points.size()<<endl;
+    cout<<triangles.size()<<endl;
     vector<double> *out_normal = new vector<double>(num_points*3);
     for (size_t i=0; i<num_triangles; i++){
         auto p1_index = triangles[i*3+0];
@@ -75,23 +50,22 @@ vector<double> *out_normal(vector<double> &points,  vector<size_t> &triangles){
         double *p3 = &(points[p3_index*3]);
         double local_normal[3];
         triangle_normal(p1,p2,p3,local_normal);
+        // calculate weight.
         double pc[3];
         pc[0] = (p1[0]+p2[0]+p3[0])/3.0;
         pc[1] = (p1[1]+p2[1]+p3[1])/3.0;
         pc[2] = (p1[2]+p2[2]+p3[2])/3.0;
-        
-        double d1 = dist(p1,pc);
-        double d2 = dist(p2,pc);
-        double d3 = dist(p3,pc);
-
+        //cout <<"center point:"<< pc[0] << pc[1] << pc[2]<< endl;
+        //cout <<"out normal:"<< local_normal[0] << local_normal[1] << local_normal[2]<< endl;
+        double d1 = distance(p1,pc);
+        double d2 = distance(p2,pc);
+        double d3 = distance(p3,pc);
         (*out_normal)[p1_index*3+0] += local_normal[0]/d1;
         (*out_normal)[p1_index*3+1] += local_normal[1]/d1;
         (*out_normal)[p1_index*3+2] += local_normal[2]/d1;
-
         (*out_normal)[p2_index*3+0] += local_normal[0]/d2;
         (*out_normal)[p2_index*3+1] += local_normal[1]/d2;
         (*out_normal)[p2_index*3+2] += local_normal[2]/d2;
-
         (*out_normal)[p3_index*3+0] += local_normal[0]/d3;
         (*out_normal)[p3_index*3+1] += local_normal[1]/d3;
         (*out_normal)[p3_index*3+2] += local_normal[2]/d3;
@@ -103,18 +77,59 @@ vector<double> *out_normal(vector<double> &points,  vector<size_t> &triangles){
         (*out_normal)[i*3+0] /= norm;
         (*out_normal)[i*3+1] /= norm;
         (*out_normal)[i*3+2] /= norm;
+        /**********************************************************************************************************************************
+        //double sum=0.0;
+        //sum += (points[i * 3 + 0]/0.002 - (*out_normal)[i * 3 + 0]) * (points[i * 3 + 0]/0.002 - (*out_normal)[i * 3 + 0]) ;
+        //sum += (points[i * 3 + 1]/0.002 - (*out_normal)[i * 3 + 1]) * (points[i * 3 + 1]/0.002 - (*out_normal)[i * 3 + 1]) ;
+        //sum += ((points[i * 3 + 2]-0.005)/0.002 - (*out_normal)[i * 3 + 2]) * ((points[i * 3 + 2]-0.005)/0.002 - (*out_normal)[i * 3 + 2]) ;
+        //cout<<"error norm:"<<sum<<endl;
+        ***********************************************************************************************************************************/
     }
     return out_normal;
+}
+/****************************************************************************
+void getNodeCoord_TriInd( vector<double> &points,  vector<size_t> &triangles)
+{
+    double double_temp;
+    size_t size_t_temp;
+	string node="points4161.txt";
+    string triangle="triangles4161.txt";
+	ifstream file;
+	file.open(node,  ios::in);
+    while(! file.eof())
+    {
+        file >> double_temp;
+        points.push_back(double_temp);
+    }
+    points.pop_back();
+	file.close();
+	file.open(triangle,  ios::in);
+    while(! file.eof())
+    {
+        file >> size_t_temp;
+        triangles.push_back(size_t_temp);
+    }
+    triangles.pop_back();
+	file.close();
 }
 int main(){
     vector<double> points;
     vector<size_t> triangles;
     getNodeCoord_TriInd(points, triangles);
+
     auto a = out_normal(points, triangles);
-    cout<<points.size()<<endl;
+    cout << 1<< endl;
+    for (int i = 0; i < 2279; i++){
+
+    }
+    double *p = &(points[6]);
+    cout << p[0] << p[1] << p[2] << endl;
+    cout << points.size()<< endl;
+    cout << triangles.size()<< endl;
     return 0;
 }
-py::array_t<double> pynormal(py::array_t<double> input1, py::array_t<int> input2)
+*******************************************************************************/
+py::array_t<double> normal1(py::array_t<double> input1, py::array_t<int> input2)
 {	
 	py::buffer_info buf1 = input1.request();
     py::buffer_info buf2 = input2.request();
@@ -135,18 +150,27 @@ py::array_t<double> pynormal(py::array_t<double> input1, py::array_t<int> input2
         triangles.push_back(buf_trias[i]);
 
     auto result = *out_normal(points, triangles);
+
     py::array_t<double> output = py::array_t<double>(num_points);
     py::buffer_info buf3 = output.request();
     double* normal = (double*)buf3.ptr;
     for (size_t i = 0; i < num_points; i++){
 		normal[i] = result[i];
 	}
+    /************************************************************************************************************************
+    for(int i=0;i<points.size()/3;i++){
+        double sum=0.0;
+        sum += (points[i * 3 + 0]/0.002 - result[i * 3 + 0]) * (points[i * 3 + 0]/0.002 - result[i * 3 + 0]) ;
+        sum += (points[i * 3 + 1]/0.002 - result[i * 3 + 1]) * (points[i * 3 + 1]/0.002 - result[i * 3 + 1]) ;
+        sum += ((points[i * 3 + 2]-0.005)/0.002 - result[i * 3 + 2]) * ((points[i * 3 + 2]-0.005)/0.002 - result[i * 3 + 2]) ;
+        cout<<"error norm:"<<sum<<endl;
+    }
+    ************************************************************************************************************************/
     return output;
 }
 
-PYBIND11_MODULE(pynormal,m){
-    m.def("pynormal", &pynormal, "haven't reckon about the explanation yet");
+PYBIND11_MODULE(normal1,m){
+    m.def("normal1", &normal1, "haven't reckon about the explanation yet");
 }
-// c++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` normal.cpp -o normal`python3-config --extension-suffix`
-
-// c++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` pynormal.cpp -o pynormal`python3-config --extension-suffix`
+// output executable program.
+// c++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` out_normal.cpp -o out_normal`python3-config --extension-suffix`
